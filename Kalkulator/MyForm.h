@@ -636,7 +636,7 @@ namespace Kalkulator
 			{
 				num1 = System::Convert::ToDouble(tb_num->Text);
 				symbol = '*';
-				tb_num->AppendText(tb_num->Text + bt_mul->Text);
+				tb_result->AppendText(tb_num->Text + bt_mul->Text);
 				tb_num->Clear();
 				com = false;
 			}

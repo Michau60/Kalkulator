@@ -487,14 +487,19 @@ namespace Kalkulator
 #pragma endregion
 		void readfile()
 		{
+			String^ tekst;
 			StreamReader^ sr = File::OpenText(FileName);
-			if (sr->ReadLine() != "")
+			if (sr->ReadLine() == "")
+				sr->Close();
+			else
 			{
+				sr=File::OpenText(FileName);
+				tekst = sr->ReadLine();
 				this->cb_history->BeginUpdate();
-				this->cb_history->Items->Add(sr->ReadToEnd());
+				this->cb_history->Items->Add(tekst);
 				this->cb_history->EndUpdate();
 				this->lb_history->BeginUpdate();
-				this->lb_history->Items->Add(sr->ReadToEnd());
+				this->lb_history->Items->Add(tekst);
 				this->lb_history->EndUpdate();
 				sr->Close();
 			}

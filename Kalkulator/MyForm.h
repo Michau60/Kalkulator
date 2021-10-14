@@ -485,34 +485,34 @@ namespace Kalkulator
 
 		}
 #pragma endregion
-		void readfile()
+		void readfile() //rf
 		{
 			String^ tekst;
-			StreamReader^ sr = File::OpenText(FileName);
-			if (sr->ReadLine() == "")
-				sr->Close();
-			else
+			if (File::Exists(FileName))
 			{
-				sr=File::OpenText(FileName);
-				tekst = sr->ReadLine();
-				this->cb_history->BeginUpdate();
-				this->cb_history->Items->Add(tekst);
-				this->cb_history->EndUpdate();
-				this->lb_history->BeginUpdate();
-				this->lb_history->Items->Add(tekst);
-				this->lb_history->EndUpdate();
-				sr->Close();
+				StreamReader^ sr = File::OpenText(FileName);
+				if (sr->ReadLine() == nullptr ||sr->ReadLine()=="")
+				{
+					MessageBox::Show("Pusty plik!");
+					sr->Close();
+				}
+				else
+				{
+					tekst = sr->ReadLine();
+					this->cb_history->BeginUpdate();
+					this->cb_history->Items->Add(tekst);
+					this->cb_history->EndUpdate();
+					this->lb_history->BeginUpdate();
+					this->lb_history->Items->Add(tekst);
+					this->lb_history->EndUpdate();
+				}
 			}
-			sr->Close();
 		}
-		void saveFile()
+		void saveFile()//sf
 		{
 			StreamWriter^ sw = gcnew StreamWriter(FileName);
-			if (System::IO::File::Exists(FileName))
-			{
-				sw->WriteLine(tb_result->Text);
-				sw->Close();
-			}
+			sw->WriteLine(tb_result->Text);
+			sw->Close();
 		}
 		void compute(char symbol, double num1, double num2)
 		{
@@ -714,7 +714,6 @@ namespace Kalkulator
 		else
 		{
 			
-			saveFile();
 			cb_history->BeginUpdate();
 			cb_history->Items->Add(tb_result->Text);
 			cb_history->EndUpdate();
@@ -722,6 +721,7 @@ namespace Kalkulator
 			lb_history->BeginUpdate();
 			lb_history->Items->Add(tb_result->Text);
 			lb_history->EndUpdate();
+			saveFile();
 		}
 	}
 	private: System::Void bt_load_Click(System::Object^ sender, System::EventArgs^ e)

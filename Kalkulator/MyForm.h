@@ -1,6 +1,7 @@
 #pragma once
 
-namespace Kalkulator {
+namespace Kalkulator
+{
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -8,7 +9,9 @@ namespace Kalkulator {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	char symbol;
-	double num1 = 0,num2=0;
+	double num1 = 0, num2 = 0,res=0;
+	bool com = false, eq = false, sym;
+	int index;
 	/// <summary>
 	/// Podsumowanie informacji o MyForm
 	/// </summary>
@@ -81,13 +84,14 @@ namespace Kalkulator {
 	private: System::Windows::Forms::TextBox^ tb_result;
 	private: System::Windows::Forms::ListBox^ lb_history;
 	private: System::Windows::Forms::ComboBox^ cb_history;
+	private: System::Windows::Forms::Label^ lbl_histoy;
 
 
 
 
 
 
-	private: System::Windows::Forms::Label^ label1;
+
 	private: System::Windows::Forms::Button^ bt_save;
 	private: System::Windows::Forms::Button^ bt_load;
 	private: System::Windows::Forms::Button^ bt_del;
@@ -99,7 +103,7 @@ namespace Kalkulator {
 		/// <summary>
 		/// Wymagana zmienna projektanta.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -132,7 +136,7 @@ namespace Kalkulator {
 			this->tb_result = (gcnew System::Windows::Forms::TextBox());
 			this->lb_history = (gcnew System::Windows::Forms::ListBox());
 			this->cb_history = (gcnew System::Windows::Forms::ComboBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->lbl_histoy = (gcnew System::Windows::Forms::Label());
 			this->bt_save = (gcnew System::Windows::Forms::Button());
 			this->bt_load = (gcnew System::Windows::Forms::Button());
 			this->bt_del = (gcnew System::Windows::Forms::Button());
@@ -360,45 +364,51 @@ namespace Kalkulator {
 			// 
 			// tb_num
 			// 
+			this->tb_num->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F));
 			this->tb_num->Location = System::Drawing::Point(12, 50);
 			this->tb_num->Name = L"tb_num";
-			this->tb_num->Size = System::Drawing::Size(313, 20);
+			this->tb_num->ReadOnly = true;
+			this->tb_num->Size = System::Drawing::Size(313, 35);
 			this->tb_num->TabIndex = 64;
 			// 
 			// tb_result
 			// 
+			this->tb_result->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F));
 			this->tb_result->Location = System::Drawing::Point(12, 12);
 			this->tb_result->Name = L"tb_result";
 			this->tb_result->ReadOnly = true;
-			this->tb_result->Size = System::Drawing::Size(313, 20);
+			this->tb_result->Size = System::Drawing::Size(313, 35);
 			this->tb_result->TabIndex = 65;
 			// 
 			// lb_history
 			// 
+			this->lb_history->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F));
 			this->lb_history->FormattingEnabled = true;
+			this->lb_history->ItemHeight = 31;
 			this->lb_history->Location = System::Drawing::Point(331, 92);
 			this->lb_history->Name = L"lb_history";
 			this->lb_history->SelectionMode = System::Windows::Forms::SelectionMode::None;
-			this->lb_history->Size = System::Drawing::Size(263, 238);
+			this->lb_history->Size = System::Drawing::Size(263, 221);
 			this->lb_history->TabIndex = 66;
 			// 
 			// cb_history
 			// 
 			this->cb_history->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->cb_history->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.25F));
 			this->cb_history->FormattingEnabled = true;
 			this->cb_history->Location = System::Drawing::Point(332, 50);
 			this->cb_history->Name = L"cb_history";
-			this->cb_history->Size = System::Drawing::Size(262, 21);
+			this->cb_history->Size = System::Drawing::Size(262, 25);
 			this->cb_history->TabIndex = 67;
 			// 
-			// label1
+			// lbl_histoy
 			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(328, 72);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(80, 13);
-			this->label1->TabIndex = 68;
-			this->label1->Text = L"Historia dzia³añ";
+			this->lbl_histoy->AutoSize = true;
+			this->lbl_histoy->Location = System::Drawing::Point(328, 78);
+			this->lbl_histoy->Name = L"lbl_histoy";
+			this->lbl_histoy->Size = System::Drawing::Size(80, 13);
+			this->lbl_histoy->TabIndex = 68;
+			this->lbl_histoy->Text = L"Historia dzia³añ";
 			// 
 			// bt_save
 			// 
@@ -438,7 +448,7 @@ namespace Kalkulator {
 			this->Controls->Add(this->bt_del);
 			this->Controls->Add(this->bt_load);
 			this->Controls->Add(this->bt_save);
-			this->Controls->Add(this->label1);
+			this->Controls->Add(this->lbl_histoy);
 			this->Controls->Add(this->cb_history);
 			this->Controls->Add(this->lb_history);
 			this->Controls->Add(this->tb_result);
@@ -475,12 +485,32 @@ namespace Kalkulator {
 			switch (symbol)
 			{
 			case('+'):
+				res = num1 + num2;
+				tb_result->Text=num1.ToString()+"+"+num2.ToString()+"=" + res.ToString();
+				tb_num->Clear();
+				sym = false;
+				com = false;
 				break;
 			case('-'):
+				res = num1 - num2;
+				tb_result->Text = num1.ToString() + "-" + num2.ToString() + "=" + res.ToString();
+				tb_num->Clear();
+				sym = false;
+				com = false;
 				break;
 			case('*'):
+				res = num1 * num2;
+				tb_result->Text = num1.ToString() + "*" + num2.ToString() + "=" + res.ToString();
+				tb_num->Clear();
+				sym = false;
+				com = false;
 				break;
 			case('/'):
+				res = num1 / num2;
+				tb_result->Text = num1.ToString() + "/" + num2.ToString() + "=" + res.ToString();
+				tb_num->Clear();
+				sym = false;
+				com = false;
 				break;
 			}
 		}
@@ -494,129 +524,192 @@ namespace Kalkulator {
 			compute(symbol, num1, num2);
 		}
 	}
-private: System::Void bt_1_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_1->Text);
-}
-private: System::Void bt_2_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_2->Text);
-}
-private: System::Void bt_3_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_3->Text);
-}
-private: System::Void bt_4_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_4->Text);
-}
-private: System::Void bt_5_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	tb_num->AppendText(bt_5->Text);
-}
-private: System::Void bt_6_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	tb_num->AppendText(bt_6->Text);
-}
-private: System::Void bt_7_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_7->Text);
-}
-private: System::Void bt_8_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_8->Text);
-}
-private: System::Void bt_9_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_9->Text);
-}
-private: System::Void bt_0_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_0->Text);
-}
-private: System::Void bt_com_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	tb_num->AppendText(bt_com->Text);
-}
-private: System::Void bt_div_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	tb_num->AppendText(bt_div->Text);
-}
-private: System::Void bt_add_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->AppendText(bt_add->Text);
-}
-private: System::Void bt_sub_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	tb_num->AppendText(bt_sub->Text);
-}
-private: System::Void bt_mul_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	tb_num->AppendText(bt_mul->Text);
-}
-private: System::Void bt_pm_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	if (tb_num->Text == "")
-		MessageBox::Show("Brak liczby!");
-	else
+	private: System::Void bt_1_Click(System::Object^ sender, System::EventArgs^ e)
 	{
-		double liczba = System::Convert::ToDouble(tb_num->Text);
-		liczba = liczba * -1;
-		tb_num->Text = liczba.ToString();
+		tb_num->AppendText(bt_1->Text);
 	}
-}
-private: System::Void bt_backspace_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	if (tb_num->TextLength > 0)
-		tb_num->Text=tb_num->Text->Substring(0,tb_num->Text->Length-1);
-	else
-		MessageBox::Show("Brak liczb do usuniêcia!");
-}
-private: System::Void bt_c_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->Clear();
-	tb_result->Clear();
-}
-private: System::Void bt_ce_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	tb_num->Clear();
-}
-private: System::Void bt_save_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	if (tb_result->Text == "")
-		MessageBox::Show("Brak dzia³ania do zapisania!");
-	else
+	private: System::Void bt_2_Click(System::Object^ sender, System::EventArgs^ e)
 	{
-		cb_history->BeginUpdate();
-		cb_history->Items->Add(tb_result->Text);
-		cb_history->EndUpdate();
+		tb_num->AppendText(bt_2->Text);
+	}
+	private: System::Void bt_3_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_3->Text);
+	}
+	private: System::Void bt_4_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_4->Text);
+	}
+	private: System::Void bt_5_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_5->Text);
+	}
+	private: System::Void bt_6_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_6->Text);
+	}
+	private: System::Void bt_7_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_7->Text);
+	}
+	private: System::Void bt_8_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_8->Text);
+	}
+	private: System::Void bt_9_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_9->Text);
+	}
+	private: System::Void bt_0_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->AppendText(bt_0->Text);
+	}
+	private: System::Void bt_com_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (com == false)
+			if (tb_num->Text == "")
+				MessageBox::Show("Podaj liczbê!");
+			else
+			{
+				tb_num->AppendText(bt_com->Text);
+				com = true;
+			}
+	}
+	private: System::Void bt_div_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (sym == false)
+		{
+			if (tb_num->Text == "")
+				MessageBox::Show("Podaj liczbê!");
+			else
+			{
+				num1 = System::Convert::ToDouble(tb_num->Text);
+				symbol = '/';
+				tb_result->AppendText(tb_num->Text + bt_div->Text);
+				tb_num->Clear();
+				com = false;
+			}
+		}
+		sym = true;
+	}
+	private: System::Void bt_add_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (sym == false)
+		{
+			if (tb_num->Text == "")
+				MessageBox::Show("Podaj liczbê!");
+			else
+			{
+				num1 = System::Convert::ToDouble(tb_num->Text);
+				symbol = '+';
+				tb_result->AppendText(tb_num->Text + bt_add->Text);
+				tb_num->Clear();
+				com = false;
+			}
+		}
+		sym = true;
+	}
+	private: System::Void bt_sub_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (sym == false)
+		{
+			if (tb_num->Text == "")
+				MessageBox::Show("Podaj liczbê!");
+			else
+			{
+				num1 = System::Convert::ToDouble(tb_num->Text);
+				symbol = '-';
+				tb_result->AppendText(tb_num->Text + bt_sub->Text);
+				tb_num->Clear();
+				com = false;
+			}
+		}
+		sym = true;
+	}
+	private: System::Void bt_mul_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (sym == false)
+		{
+			if (tb_num->Text == "")
+				MessageBox::Show("Podaj liczbê!");
+			else
+			{
+				num1 = System::Convert::ToDouble(tb_num->Text);
+				symbol = '*';
+				tb_num->AppendText(tb_num->Text + bt_mul->Text);
+				tb_num->Clear();
+				com = false;
+			}
+		}
+		sym = true;
+	}
+	private: System::Void bt_pm_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (tb_num->Text == "")
+			MessageBox::Show("Brak liczby!");
+		else
+		{
+			double liczba = System::Convert::ToDouble(tb_num->Text);
+			liczba = liczba * -1;
+			tb_num->Text = liczba.ToString();
+		}
+	}
+	private: System::Void bt_backspace_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (tb_num->TextLength > 0)
+			tb_num->Text = tb_num->Text->Substring(0, tb_num->Text->Length - 1);
+		else
+			MessageBox::Show("Brak liczb do usuniêcia!");
+	}
+	private: System::Void bt_c_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->Clear();
+		tb_result->Clear();
+		sym = false;
+		com = false;
+	}
+	private: System::Void bt_ce_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		tb_num->Clear();
+		com = false;
+	}
+	private: System::Void bt_save_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (tb_result->Text == "")
+			MessageBox::Show("Brak dzia³ania do zapisania!");
+		else
+		{
+			cb_history->BeginUpdate();
+			cb_history->Items->Add(tb_result->Text);
+			cb_history->EndUpdate();
 
-		lb_history->BeginUpdate();
-		lb_history->Items->Add(tb_result->Text);
-		lb_history->EndUpdate();
+			lb_history->BeginUpdate();
+			lb_history->Items->Add(tb_result->Text);
+			lb_history->EndUpdate();
+		}
 	}
-}
-private: System::Void bt_load_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	if (cb_history->SelectedIndex==-1 )
-		MessageBox::Show("Wybierz dzia³anie do za³adowania!");
-	else
-	tb_result->Text = cb_history->SelectedItem->ToString();
-}
-private: System::Void bt_del_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	if (cb_history->SelectedIndex == -1)
-		MessageBox::Show("Wybierz dzia³anie do usuniêcia!");
-	else
+	private: System::Void bt_load_Click(System::Object^ sender, System::EventArgs^ e)
 	{
-		cb_history->BeginUpdate();
-		cb_history->Items->Remove(cb_history->SelectedItem);
-		cb_history->EndUpdate();
-
-		lb_history->BeginUpdate();
-		lb_history->Items->Remove(lb_history->SelectedItem);
-		lb_history->EndUpdate();
+		if (cb_history->SelectedIndex == -1)
+			MessageBox::Show("Wybierz dzia³anie do za³adowania!");
+		else
+			tb_result->Text = cb_history->SelectedItem->ToString();
 	}
-}
-};
+	private: System::Void bt_del_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (cb_history->SelectedIndex == -1)
+			MessageBox::Show("Wybierz dzia³anie do usuniêcia!");
+		else
+		{
+			cb_history->BeginUpdate();
+			index = cb_history->SelectedIndex;
+			cb_history->Items->Remove(cb_history->SelectedItem);
+			cb_history->EndUpdate();
+
+			lb_history->BeginUpdate();
+			lb_history->Items->RemoveAt(index);
+			lb_history->EndUpdate();
+		}
+	}
+	};
 }

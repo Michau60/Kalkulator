@@ -17,5 +17,6 @@ int main(array<System::String^>^ args)
 
 	Kalkulator::MyForm form;
 	Application::Run(% form);
+
 	return 0;
 }

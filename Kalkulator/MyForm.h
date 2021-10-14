@@ -8,15 +8,18 @@ namespace Kalkulator
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::IO;
 	char symbol;
 	double num1 = 0, num2 = 0,res=0;
 	bool com = false, eq = false, sym;
 	int index;
+	
 	/// <summary>
 	/// Podsumowanie informacji o MyForm
 	/// </summary>
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
+		String^ FileName = "obliczenia.txt";
 	public:
 		MyForm(void)
 		{
@@ -390,6 +393,7 @@ namespace Kalkulator
 			this->lb_history->SelectionMode = System::Windows::Forms::SelectionMode::None;
 			this->lb_history->Size = System::Drawing::Size(263, 221);
 			this->lb_history->TabIndex = 66;
+			readfile();
 			// 
 			// cb_history
 			// 
@@ -400,6 +404,7 @@ namespace Kalkulator
 			this->cb_history->Name = L"cb_history";
 			this->cb_history->Size = System::Drawing::Size(262, 25);
 			this->cb_history->TabIndex = 67;
+
 			// 
 			// lbl_histoy
 			// 
@@ -480,6 +485,30 @@ namespace Kalkulator
 
 		}
 #pragma endregion
+		void readfile()
+		{
+			StreamReader^ sr = File::OpenText(FileName);
+			if (sr->ReadLine() != "")
+			{
+				this->cb_history->BeginUpdate();
+				this->cb_history->Items->Add(sr->ReadToEnd());
+				this->cb_history->EndUpdate();
+				this->lb_history->BeginUpdate();
+				this->lb_history->Items->Add(sr->ReadToEnd());
+				this->lb_history->EndUpdate();
+				sr->Close();
+			}
+			sr->Close();
+		}
+		void saveFile()
+		{
+			StreamWriter^ sw = gcnew StreamWriter(FileName);
+			if (System::IO::File::Exists(FileName))
+			{
+				sw->WriteLine(tb_result->Text);
+				sw->Close();
+			}
+		}
 		void compute(char symbol, double num1, double num2)
 		{
 			switch (symbol)
@@ -679,6 +708,8 @@ namespace Kalkulator
 			MessageBox::Show("Brak dzia³ania do zapisania!");
 		else
 		{
+			
+			saveFile();
 			cb_history->BeginUpdate();
 			cb_history->Items->Add(tb_result->Text);
 			cb_history->EndUpdate();
@@ -693,7 +724,9 @@ namespace Kalkulator
 		if (cb_history->SelectedIndex == -1)
 			MessageBox::Show("Wybierz dzia³anie do za³adowania!");
 		else
+		{
 			tb_result->Text = cb_history->SelectedItem->ToString();
+		}
 	}
 	private: System::Void bt_del_Click(System::Object^ sender, System::EventArgs^ e)
 	{

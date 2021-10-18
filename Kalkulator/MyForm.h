@@ -507,12 +507,17 @@ namespace Kalkulator
 				while (!sr->EndOfStream)
 				{
 						tekst=sr->ReadLine();
-						this->cb_history->Items->Add(tekst);
-						this->lb_history->Items->Add(tekst);
+						if (tekst != "")
+						{
+							this->cb_history->Items->Add(tekst);
+							this->lb_history->Items->Add(tekst);
+						}
 				}
 				this->cb_history->EndUpdate();
 				this->lb_history->EndUpdate();
+				sr->BaseStream->Seek(0, SeekOrigin::Begin);
 				sr->DiscardBufferedData();
+				sr->Close();
 			}
 		}
 		void saveFile()//sf
@@ -520,6 +525,27 @@ namespace Kalkulator
 			StreamWriter^ sw = gcnew StreamWriter(SaveFileName, true);
 			sw->WriteLine(tb_result->Text);
 			sw->Close();
+		}
+		void removeLine(String^ S_Line) //rl
+		{
+			String^ Line = nullptr;
+			String^ l_txt;
+			bool found = true;
+			StreamReader^ sr = gcnew StreamReader(SaveFileName);
+			sr->BaseStream->Seek(0, SeekOrigin::Begin);
+			while (found)
+			{
+				l_txt=sr->ReadLine();
+				if (String::Equals(S_Line, l_txt))
+				{
+					sr->Close();
+					StreamWriter^ sw = gcnew StreamWriter(SaveFileName,true);
+					sw->WriteLine(Line);
+					sw->Close();
+					found = false;
+				}	
+			}
+			
 		}
 		void compute(char symbol, double num1, double num2)
 		{
@@ -746,14 +772,18 @@ namespace Kalkulator
 			MessageBox::Show("Wybierz dzia³anie do usuniêcia!");
 		else
 		{
+			String^ Line_to_delete;
+			Line_to_delete=cb_history->SelectedItem->ToString();
 			cb_history->BeginUpdate();
 			index = cb_history->SelectedIndex;
+			
 			cb_history->Items->Remove(cb_history->SelectedItem);
 			cb_history->EndUpdate();
 
 			lb_history->BeginUpdate();
 			lb_history->Items->RemoveAt(index);
 			lb_history->EndUpdate();
+			removeLine(Line_to_delete);
 		}
 	}
 	};

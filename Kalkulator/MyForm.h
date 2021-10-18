@@ -19,7 +19,8 @@ namespace Kalkulator
 	/// </summary>
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
-		String^ FileName = "obliczenia.txt";
+		String^ SaveFileName = "Zapisane_obliczenia.txt";
+		String^ ReadFileName = "Obliczenia_do_odczytania.txt";
 	public:
 		MyForm(void)
 		{
@@ -488,29 +489,35 @@ namespace Kalkulator
 		void readfile() //rf
 		{
 			String^ tekst;
-			if (File::Exists(FileName))
+			StreamReader^ sr = gcnew StreamReader(SaveFileName);
+			sr->BaseStream->Seek(0, SeekOrigin::Begin);
+			if (sr->ReadLine() == nullptr ||sr->ReadLine()=="")
 			{
-				StreamReader^ sr = File::OpenText(FileName);
-				if (sr->ReadLine() == nullptr ||sr->ReadLine()=="")
-				{
 					MessageBox::Show("Pusty plik!");
+					sr->DiscardBufferedData();
+					sr->BaseStream->Seek(0, SeekOrigin::Begin);
 					sr->Close();
-				}
-				else
+			}
+			else
+			{
+				sr->DiscardBufferedData();
+				sr->BaseStream->Seek(0, SeekOrigin::Begin);
+				this->cb_history->BeginUpdate();
+				this->lb_history->BeginUpdate();
+				while (!sr->EndOfStream)
 				{
-					tekst = sr->ReadLine();
-					this->cb_history->BeginUpdate();
-					this->cb_history->Items->Add(tekst);
-					this->cb_history->EndUpdate();
-					this->lb_history->BeginUpdate();
-					this->lb_history->Items->Add(tekst);
-					this->lb_history->EndUpdate();
+						tekst=sr->ReadLine();
+						this->cb_history->Items->Add(tekst);
+						this->lb_history->Items->Add(tekst);
 				}
+				this->cb_history->EndUpdate();
+				this->lb_history->EndUpdate();
+				sr->DiscardBufferedData();
 			}
 		}
 		void saveFile()//sf
 		{
-			StreamWriter^ sw = gcnew StreamWriter(FileName);
+			StreamWriter^ sw = gcnew StreamWriter(SaveFileName, true);
 			sw->WriteLine(tb_result->Text);
 			sw->Close();
 		}
